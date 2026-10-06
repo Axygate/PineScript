@@ -1,0 +1,210 @@
+// ============================================================================
+//                                AXYGATE
+// Brand       : Axygate
+// Copyright   : Axygate. All rights reserved.
+// Project     : Axygate Core Systems
+// License     : Mozilla Public License 2.0 (MPL-2.0)
+// Contact     : axygate.official@gmail.com
+// ============================================================================
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0
+// at https://mozilla.org/MPL/2.0/
+
+//@version=6
+indicator("[Axygate] - Live Position Dashboard", shorttitle="AXY - LPD", overlay=true)
+
+///  COLORS & GROUPS   ///
+BullColor=#FFFFFF
+BearColor=#5B9CF6
+string G_EL="Entry Levels"
+
+///  INPUT   ///
+exchange = input.string("BINANCE", "Exchange", inline = "LPD1")
+is_futures = input.bool(true, "Futures", inline = "LPD1")
+sortBy = input.string("PNL", "Sort By", options=["NAME", "PNL"], inline = "LPD2")
+
+sym1 = input.string("", "Asset 1", inline="r1")
+entry1 = input.float(0.0, "", step=0.0000001, inline="r1")
+dir1 = input.string("SHORT", "", options=["LONG", "SHORT"], inline="r1")
+lev1 = input.int(20, "", inline="r1")
+sym2 = input.string("", "Asset 2", inline="r2")
+entry2 = input.float(0.0, "", step=0.0000001, inline="r2")
+dir2 = input.string("SHORT", "", options=["LONG", "SHORT"], inline="r2")
+lev2 = input.int(20, "", inline="r2")
+sym3 = input.string("SKR", "Asset 3", inline="r3")
+entry3 = input.float(0.0, "", step=0.0000001, inline="r3")
+dir3 = input.string("SHORT", "", options=["LONG", "SHORT"], inline="r3")
+lev3 = input.int(20, "", inline="r3")
+sym4 = input.string("", "Asset 4", inline="r4")
+entry4 = input.float(0.0, "", step=0.0000001, inline="r4")
+dir4 = input.string("LONG", "", options=["LONG", "SHORT"], inline="r4")
+lev4 = input.int(10, "", inline="r4")
+sym5 = input.string("", "Asset 5", inline="r5")
+entry5 = input.float(0.0, "", step=0.0000001, inline="r5")
+dir5 = input.string("SHORT", "", options=["LONG", "SHORT"], inline="r5")
+lev5 = input.int(20, "", inline="r5")
+sym6 = input.string("", "Asset 6", inline="r6")
+entry6 = input.float(0, "", step=0.0000001, inline="r6")
+dir6 = input.string("LONG", "", options=["LONG", "SHORT"], inline="r6")
+lev6 = input.int(10, "", inline="r6")
+sym7 = input.string("", "Asset 7", inline="r7")
+entry7 = input.float(0, "", step=0.0000001, inline="r7")
+dir7 = input.string("LONG", "", options=["LONG", "SHORT"], inline="r7")
+lev7 = input.int(0, "", inline="r7")
+sym8 = input.string("", "Asset 8", inline="r8")
+entry8 = input.float(0, "", step=0.0000001, inline="r8")
+dir8 = input.string("LONG", "", options=["LONG", "SHORT"], inline="r8")
+lev8 = input.int(0, "", inline="r8")
+sym9 = input.string("", "Asset 9", inline="r9")
+entry9 = input.float(0, "", step=0.0000001, inline="r9")
+dir9 = input.string("LONG", "", options=["LONG", "SHORT"], inline="r9")
+lev9 = input.int(0, "", inline="r9")
+sym10 = input.string("", "Asset10", inline="r10")
+entry10 = input.float(0, "", step=0.0000001, inline="r10")
+dir10 = input.string("LONG", "", options=["LONG", "SHORT"], inline="r10")
+lev10 = input.int(0, "", inline="r10")
+
+symbols = array.from(sym1, sym2, sym3, sym4, sym5, sym6, sym7, sym8, sym9, sym10)
+entries = array.from(entry1, entry2, entry3, entry4, entry5, entry6, entry7, entry8, entry9, entry10)
+dirs = array.from(dir1, dir2, dir3, dir4, dir5, dir6, dir7, dir8, dir9, dir10)
+levs = array.from(lev1, lev2, lev3, lev4, lev5, lev6, lev7, lev8, lev9, lev10)
+
+///  HELPER FUNCTIONS   ///
+getTicker(sym) =>
+    is_futures ? exchange + ":" + sym + "USDT.P" : exchange + ":" + sym
+
+getBar(pnl) =>
+    pnl >= 100 ? "██████" :
+     pnl >= 50 ? "█████░" :
+     pnl > 0 ? "████░░" :
+     pnl > -50 ? "███░░░" :
+     pnl > -100 ? "██░░░░" :
+     "█░░░░░"
+
+getBarColor(pnl) =>
+    pnl >= 100 ? color.rgb(255, 215, 0) :
+     pnl >= 50 ? color.lime :
+     pnl > 0 ? color.green :
+     pnl > -50 ? color.rgb(255, 80, 80) :
+     pnl > -100 ? color.red :
+     color.fuchsia
+
+getState(pnl) =>
+    pnl >= 100 ? "🏆 BONUS" :
+     pnl >= 50 ? "🚀 STRONG" :
+     pnl > 0 ? "✅ SAFE" :
+     pnl > -50 ? "⚠ WEAK" :
+     pnl > -100 ? "⚠ RISK" :
+     "🚨 DANGER"
+
+///  DATA ARRAYS   ///
+var string[] s = array.new_string()
+var float[] p = array.new_float()
+var string[] d = array.new_string()
+var int[] l = array.new_int()
+
+var table t = na
+///  MAIN EXECUTION   ///
+if barstate.islast
+    array.clear(s)
+    array.clear(p)
+    array.clear(d)
+    array.clear(l)
+
+    for i = 0 to array.size(symbols) - 1
+        sym = array.get(symbols, i)
+        entry = array.get(entries, i)
+        dir = array.get(dirs, i)
+        lev = array.get(levs, i)
+
+        if str.length(sym) > 0 and entry > 0 and lev > 0
+            price = request.security(getTicker(sym), timeframe.period, close)
+            pnlBase = dir == "LONG" ? (price - entry) / entry * 100 : (entry - price) / entry * 100
+            pnlReal = pnlBase * lev
+
+            array.push(s, sym)
+            array.push(p, pnlReal)
+            array.push(d, dir)
+            array.push(l, lev)
+    ///  SORT   ///
+    size = array.size(s)
+
+    if size > 1
+        if sortBy == "PNL"
+            for i = 0 to size - 2
+                for j = 0 to size - 2 - i
+                    if array.get(p, j) < array.get(p, j + 1)
+                        tmpP = array.get(p, j)
+                        array.set(p, j, array.get(p, j + 1))
+                        array.set(p, j + 1, tmpP)
+
+                        tmpS = array.get(s, j)
+                        array.set(s, j, array.get(s, j + 1))
+                        array.set(s, j + 1, tmpS)
+
+                        tmpD = array.get(d, j)
+                        array.set(d, j, array.get(d, j + 1))
+                        array.set(d, j + 1, tmpD)
+
+                        tmpL = array.get(l, j)
+                        array.set(l, j, array.get(l, j + 1))
+                        array.set(l, j + 1, tmpL)
+
+        else
+            nameIndexes = array.sort_indices(s, order.ascending)
+
+            sortedS = array.new_string()
+            sortedP = array.new_float()
+            sortedD = array.new_string()
+            sortedL = array.new_int()
+
+            for i = 0 to size - 1
+                idx = array.get(nameIndexes, i)
+                array.push(sortedS, array.get(s, idx))
+                array.push(sortedP, array.get(p, idx))
+                array.push(sortedD, array.get(d, idx))
+                array.push(sortedL, array.get(l, idx))
+
+            array.clear(s)
+            array.clear(p)
+            array.clear(d)
+            array.clear(l)
+
+            for i = 0 to size - 1
+                array.push(s, array.get(sortedS, i))
+                array.push(p, array.get(sortedP, i))
+                array.push(d, array.get(sortedD, i))
+                array.push(l, array.get(sortedL, i))
+    ///  RECREATE TABLE WITH ONLY ACTIVE ASSETS   ///
+    activeCount = array.size(s)
+
+    if not na(t)
+        table.delete(t)
+
+    if activeCount > 0
+        t := table.new(position.bottom_right, 5, activeCount)
+
+        for i = 0 to activeCount - 1
+            sym = array.get(s, i)
+            pnl = array.get(p, i)
+            dir = array.get(d, i)
+            lev = array.get(l, i)
+
+            arrow = dir == "LONG" ? "▲" : "▼"
+            col = getBarColor(pnl)
+            bar = getBar(pnl)
+            state = getState(pnl)
+
+            isBest = pnl >= 100
+            isWorst = pnl < -100
+
+            bg = isBest ? color.new(color.green, 80) :
+                 isWorst ? color.new(color.fuchsia, 70) :
+                 color.new(color.black, 85)
+
+            table.cell(t, 0, i, sym, text_color=color.white, bgcolor=bg)
+            table.cell(t, 1, i, arrow + str.tostring(lev) + "x", text_color=color.white, bgcolor=bg)
+            table.cell(t, 2, i, str.tostring(pnl, "#.##") + "%", text_color=col, bgcolor=bg)
+            table.cell(t, 3, i, state, text_color=col, bgcolor=bg)
+            table.cell(t, 4, i, bar, text_color=col, bgcolor=bg)
+
+
