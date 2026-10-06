@@ -1,0 +1,64 @@
+// ============================================================================
+//                                AXYGATE
+// Brand       : Axygate
+// Copyright   : Axygate. All rights reserved.
+// Project     : Axygate Core Systems
+// License     : Mozilla Public License 2.0 (MPL-2.0)
+// Contact     : axygate.official@gmail.com
+// ============================================================================
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0
+// at https://mozilla.org/MPL/2.0/
+
+//@version=6
+indicator("[Axygate] - Multi-Timeframe Supertrend", shorttitle="AXY - MTF Supertrend", overlay=true)
+
+///  COLORS & GROUPS   ///
+color st_bull_col = #FFFFFF
+color st_bear_col = #5B9CF6
+
+string st_group   = "SUPERTREND SETTINGS"
+
+///  INPUTS   ///
+st1_tf     = input.timeframe("1", "ST1 TF:", group=st_group, inline="ST1")
+st1_period = input.int(10, "", minval=1, group=st_group, inline="ST1")
+st1_factor = input.float(3.0, "", minval=0.01, step=0.01, group=st_group, inline="ST1")
+st2_tf     = input.timeframe("5", "ST2 TF:", group=st_group, inline="ST2")
+st2_period = input.int(10, "", minval=1, group=st_group, inline="ST2")
+st2_factor = input.float(3.0, "", minval=0.01, step=0.01, group=st_group, inline="ST2")
+st3_tf     = input.timeframe("15", "ST3 TF:", group=st_group, inline="ST3")
+st3_period = input.int(10, "", minval=1, group=st_group, inline="ST3")
+st3_factor = input.float(3.0, "", minval=0.01, step=0.01, group=st_group, inline="ST3")
+st4_tf     = input.timeframe("60", "ST4 TF:", group=st_group, inline="ST4")
+st4_period = input.int(10, "", minval=1, group=st_group, inline="ST4")
+st4_factor = input.float(3.0, "", minval=0.01, step=0.01, group=st_group, inline="ST4")
+
+///  FUNCTIONS   ///
+f_get_supertrend(float factor, int period) =>
+    [st, dir] = ta.supertrend(factor, period)
+    [st[1], dir[1]]
+
+///  DATA PROCESSING & PLOTTING   ///
+// Supertrend 1
+[st1_val, st1_dir] = request.security(syminfo.tickerid, st1_tf, f_get_supertrend(st1_factor, st1_period), barmerge.gaps_off, barmerge.lookahead_on)
+st1_val_clean = barstate.isfirst ? na : st1_val
+st1_up = plot(st1_dir < 0 ? st1_val_clean : na, "ST1 Up Trend", color=st_bull_col, linewidth=1, style=plot.style_linebr, linestyle=plot.linestyle_solid, force_overlay=true)
+st1_dn = plot(st1_dir < 0 ? na : st1_val_clean, "ST1 Down Trend", color=st_bear_col, linewidth=1, style=plot.style_linebr, linestyle=plot.linestyle_solid, force_overlay=true)
+st1_mid = plot(barstate.isfirst ? na : (open + close) / 2, "ST1 Body Middle", display=display.none, editable=false)
+// Supertrend 2
+[st2_val, st2_dir] = request.security(syminfo.tickerid, st2_tf, f_get_supertrend(st2_factor, st2_period), barmerge.gaps_off, barmerge.lookahead_on)
+st2_val_clean = barstate.isfirst ? na : st2_val
+st2_up = plot(st2_dir < 0 ? st2_val_clean : na, "ST2 Up Trend", color=st_bull_col, linewidth=1, style=plot.style_linebr, linestyle=plot.linestyle_solid, force_overlay=true)
+st2_dn = plot(st2_dir < 0 ? na : st2_val_clean, "ST2 Down Trend", color=st_bear_col, linewidth=1, style=plot.style_linebr, linestyle=plot.linestyle_solid, force_overlay=true)
+st2_mid = plot(barstate.isfirst ? na : (open + close) / 2, "ST2 Body Middle", display=display.none, editable=false)
+// Supertrend 3
+[st3_val, st3_dir] = request.security(syminfo.tickerid, st3_tf, f_get_supertrend(st3_factor, st3_period), barmerge.gaps_off, barmerge.lookahead_on)
+st3_val_clean = barstate.isfirst ? na : st3_val
+st3_up = plot(st3_dir < 0 ? st3_val_clean : na, "ST3 Up Trend", color=st_bull_col, linewidth=2, style=plot.style_linebr, linestyle=plot.linestyle_solid, force_overlay=true)
+st3_dn = plot(st3_dir < 0 ? na : st3_val_clean, "ST3 Down Trend", color=st_bear_col, linewidth=2, style=plot.style_linebr, linestyle=plot.linestyle_solid, force_overlay=true)
+st3_mid = plot(barstate.isfirst ? na : (open + close) / 2, "ST3 Body Middle", display=display.none, editable=false)
+// Supertrend 4
+[st4_val, st4_dir] = request.security(syminfo.tickerid, st4_tf, f_get_supertrend(st4_factor, st4_period), barmerge.gaps_off, barmerge.lookahead_on)
+st4_val_clean = barstate.isfirst ? na : st4_val
+st4_up = plot(st4_dir < 0 ? st4_val_clean : na, "ST4 Up Trend", color=st_bull_col, linewidth=2, style=plot.style_linebr, linestyle=plot.linestyle_solid, force_overlay=true)
+st4_dn = plot(st4_dir < 0 ? na : st4_val_clean, "ST4 Down Trend", color=st_bear_col, linewidth=2, style=plot.style_linebr, linestyle=plot.linestyle_solid, force_overlay=true)
+st4_mid = plot(barstate.isfirst ? na : (open + close) / 2, "ST4 Body Middle", display=display.none, editable=false)
