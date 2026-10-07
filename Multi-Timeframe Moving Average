@@ -1,0 +1,80 @@
+// ============================================================================
+//                                AXYGATE
+// Brand       : Axygate
+// Copyright   : Axygate. All rights reserved.
+// Project     : Axygate Core Systems
+// License     : Mozilla Public License 2.0 (MPL-2.0)
+// Contact     : axygate.official@gmail.com
+// ============================================================================
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0
+// at https://mozilla.org/MPL/2.0/
+
+//@version=6
+indicator("[Axygate] - Moving Average", shorttitle="AXY - MA", overlay=true)
+
+///  COLORS & GROUPS   ///
+BullColor=#FFFFFF
+BearColor=#5B9CF6
+string G_MA="MOVING AVERAGE"
+
+///  Function to calculate moving average based on input parameters   ///
+calc_ma(ma_type, src, len, tf) =>
+    ma_val = switch ma_type
+        "HMA"  => ta.hma(src, len)
+        "SMA"  => ta.sma(src, len)
+        "SMMA" => ta.rma(src, len)
+        "EMA"  => ta.ema(src, len)
+        "RMA"  => ta.rma(src, len)
+        "WMA"  => ta.wma(src, len)
+        "VWMA" => ta.vwma(src, len)
+        "LSMA" => ta.linreg(src, len, 0)
+        => na
+    request.security(syminfo.tickerid, tf, ma_val, barmerge.gaps_on, lookahead = barmerge.lookahead_on)
+
+ma1_tf  = input.timeframe("", title = "MA 1", inline = "MA1", group = G_MA)
+ma1_typ = input.string("EMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA"], inline = "MA1", group = G_MA)
+ma1_len = input.int(10, title = "", minval = 1, inline = "MA1", group = G_MA)
+ma1_src = input(close, title = "", inline = "MA1", group = G_MA)
+
+ma2_tf  = input.timeframe("", title = "MA 2", inline = "MA2", group = G_MA)
+ma2_typ = input.string("EMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA"], inline = "MA2", group = G_MA)
+ma2_len = input.int(20, title = "", minval = 1, inline = "MA2", group = G_MA)
+ma2_src = input(close, title = "", inline = "MA2", group = G_MA)
+
+ma3_tf  = input.timeframe("", title = "MA 3", inline = "MA3", group = G_MA)
+ma3_typ = input.string("EMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA"], inline = "MA3", group = G_MA)
+ma3_len = input.int(30, title = "", minval = 1, inline = "MA3", group = G_MA)
+ma3_src = input(close, title = "", inline = "MA3", group = G_MA)
+
+ma4_tf  = input.timeframe("", title = "MA 4", inline = "MA4", group = G_MA)
+ma4_typ = input.string("EMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA"], inline = "MA4", group = G_MA)
+ma4_len = input.int(40, title = "", minval = 1, inline = "MA4", group = G_MA)
+ma4_src = input(close, title = "", inline = "MA4", group = G_MA)
+
+ma5_tf  = input.timeframe("", title = "MA 5", inline = "MA5", group = G_MA)
+ma5_typ = input.string("EMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA"], inline = "MA5", group = G_MA)
+ma5_len = input.int(50, title = "", minval = 1, inline = "MA5", group = G_MA)
+ma5_src = input(close, title = "", inline = "MA5", group = G_MA)
+
+ma6_tf  = input.timeframe("", title = "MA 6", inline = "MA6", group = G_MA)
+ma6_typ = input.string("EMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA"], inline = "MA6", group = G_MA)
+ma6_len = input.int(60, title = "", minval = 1, inline = "MA6", group = G_MA)
+ma6_src = input(close, title = "", inline = "MA6", group = G_MA)
+///  Calculate moving averages using the function   ///
+ma1 = calc_ma(ma1_typ, ma1_src, ma1_len, ma1_tf)
+ma2 = calc_ma(ma2_typ, ma2_src, ma2_len, ma2_tf)
+ma3 = calc_ma(ma3_typ, ma3_src, ma3_len, ma3_tf)
+ma4 = calc_ma(ma4_typ, ma4_src, ma4_len, ma4_tf)
+ma5 = calc_ma(ma5_typ, ma5_src, ma5_len, ma5_tf)
+ma6 = calc_ma(ma6_typ, ma6_src, ma6_len, ma6_tf)
+///  Plot moving averages   ///
+p1 = plot(ma1, "MA1", color.green, 1, plot.style_line, display = display.all, editable = true)
+p2 = plot(ma2, "MA2", color.green, 2, plot.style_line, display = display.all, editable = true)
+p3 = plot(ma3, "MA3", color.yellow, 1, plot.style_line, display = display.all, editable = true)
+p4 = plot(ma4, "MA4", color.yellow, 2, plot.style_line, display = display.all, editable = true)
+p5 = plot(ma5, "MA5", color.blue, 1, plot.style_line, display = display.all, editable = true)
+p6 = plot(ma6, "MA6", color.blue, 2, plot.style_line, display = display.all, editable = true)
+///  Fill background between MA pairs   ///
+fill(p1, p2, color.new(color.green, 50), "FILL 1-2", display = display.none)
+fill(p3, p4, color.new(color.yellow, 50), "FILL 3-4", display = display.none)
+fill(p5, p6, color.new(color.blue, 50), "FILL 5-6", display = display.none)
