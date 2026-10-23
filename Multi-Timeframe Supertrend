@@ -4,11 +4,15 @@
 // Copyright   : Axygate. All rights reserved.
 // Project     : Axygate Core Systems
 // License     : Mozilla Public License 2.0 (MPL-2.0)
-// Contact     : axygate.official@gmail.com
 // ============================================================================
-// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0
-// at https://mozilla.org/MPL/2.0/
-
+// ============================================================================
+//      █████╗ ██╗  ██╗██╗   ██╗██████╗  █████╗ ████████╗███████╗
+//     ██╔══██╗╚██╗██╔╝╚██╗ ██╔╝██╔════╝ ██╔══██╗╚══██╔══╝██╔════╝
+//     ███████║ ╚███╔╝  ╚████╔╝ ██║  ███╗███████║   ██║   █████╗  
+//     ██╔══██║ ██╔██╗   ╚██╔╝  ██║   ██║██╔══██║   ██║   ██╔══╝  
+//     ██║  ██║██╔╝ ██╗   ██║   ╚██████╔╝██║  ██║   ██║   ███████╗
+//     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
+// ============================================================================
 //@version=6
 indicator("[Axygate] - Multi-Timeframe Supertrend", shorttitle="AXY - MTF Supertrend", overlay=true)
 
