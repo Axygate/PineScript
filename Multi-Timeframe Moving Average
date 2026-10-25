@@ -24,6 +24,7 @@ BearColor = #5B9CF6
 // ==========================================
 // GROUPS & TOOLTIPS
 // ==========================================
+string G_MA="MOVING AVERAGE"
 
 ///  Function to calculate moving average based on input parameters   ///
 calc_ma(ma_type, src, len, tf) =>
