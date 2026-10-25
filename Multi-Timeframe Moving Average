@@ -24,44 +24,45 @@ string G_MA="MOVING AVERAGE"
 ///  Function to calculate moving average based on input parameters   ///
 calc_ma(ma_type, src, len, tf) =>
     ma_val = switch ma_type
-        "HMA"  => ta.hma(src, len)
-        "SMA"  => ta.sma(src, len)
-        "SMMA" => ta.rma(src, len)
-        "EMA"  => ta.ema(src, len)
-        "RMA"  => ta.rma(src, len)
-        "WMA"  => ta.wma(src, len)
-        "VWMA" => ta.vwma(src, len)
-        "LSMA" => ta.linreg(src, len, 0)
+        "HMA"   => ta.hma(src, len)
+        "SMA"   => ta.sma(src, len)
+        "SMMA"  => ta.rma(src, len)
+        "EMA"   => ta.ema(src, len)
+        "RMA"   => ta.rma(src, len)
+        "WMA"   => ta.wma(src, len)
+        "VWMA"  => ta.vwma(src, len)
+        "LSMA"  => ta.linreg(src, len, 0)
+        "ZLEMA" => ta.ema(src + (src - src[math.floor((len - 1) / 2)]), len)
         => na
     request.security(syminfo.tickerid, tf, ma_val, barmerge.gaps_on, lookahead = barmerge.lookahead_on)
 
 ma1_tf  = input.timeframe("", title = "MA 1", inline = "MA1", group = G_MA)
-ma1_typ = input.string("EMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA"], inline = "MA1", group = G_MA)
+ma1_typ = input.string("ZLEMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA","ZLEMA"], inline = "MA1", group = G_MA)
 ma1_len = input.int(10, title = "", minval = 1, inline = "MA1", group = G_MA)
 ma1_src = input(close, title = "", inline = "MA1", group = G_MA)
 
 ma2_tf  = input.timeframe("", title = "MA 2", inline = "MA2", group = G_MA)
-ma2_typ = input.string("EMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA"], inline = "MA2", group = G_MA)
+ma2_typ = input.string("ZLEMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA","ZLEMA"], inline = "MA2", group = G_MA)
 ma2_len = input.int(20, title = "", minval = 1, inline = "MA2", group = G_MA)
 ma2_src = input(close, title = "", inline = "MA2", group = G_MA)
 
 ma3_tf  = input.timeframe("", title = "MA 3", inline = "MA3", group = G_MA)
-ma3_typ = input.string("EMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA"], inline = "MA3", group = G_MA)
+ma3_typ = input.string("ZLEMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA","ZLEMA"], inline = "MA3", group = G_MA)
 ma3_len = input.int(30, title = "", minval = 1, inline = "MA3", group = G_MA)
 ma3_src = input(close, title = "", inline = "MA3", group = G_MA)
 
 ma4_tf  = input.timeframe("", title = "MA 4", inline = "MA4", group = G_MA)
-ma4_typ = input.string("EMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA"], inline = "MA4", group = G_MA)
+ma4_typ = input.string("ZLEMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA","ZLEMA"], inline = "MA4", group = G_MA)
 ma4_len = input.int(40, title = "", minval = 1, inline = "MA4", group = G_MA)
 ma4_src = input(close, title = "", inline = "MA4", group = G_MA)
 
 ma5_tf  = input.timeframe("", title = "MA 5", inline = "MA5", group = G_MA)
-ma5_typ = input.string("EMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA"], inline = "MA5", group = G_MA)
+ma5_typ = input.string("ZLEMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA","ZLEMA"], inline = "MA5", group = G_MA)
 ma5_len = input.int(50, title = "", minval = 1, inline = "MA5", group = G_MA)
 ma5_src = input(close, title = "", inline = "MA5", group = G_MA)
 
 ma6_tf  = input.timeframe("", title = "MA 6", inline = "MA6", group = G_MA)
-ma6_typ = input.string("EMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA"], inline = "MA6", group = G_MA)
+ma6_typ = input.string("ZLEMA", title = "", options = ["HMA", "SMA", "SMMA", "EMA", "RMA", "WMA", "VWMA", "LSMA","ZLEMA"], inline = "MA6", group = G_MA)
 ma6_len = input.int(60, title = "", minval = 1, inline = "MA6", group = G_MA)
 ma6_src = input(close, title = "", inline = "MA6", group = G_MA)
 ///  Calculate moving averages using the function   ///
